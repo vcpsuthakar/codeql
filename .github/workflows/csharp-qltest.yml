@@ -1,4 +1,4 @@
-name: "C#: Run QL Tests"
+name: "C#: Run QL Tests."
 
 on:
   push:
