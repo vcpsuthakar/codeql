@@ -1,0 +1,37 @@
+name: CodeQL Analysis
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '**/*' # Trigger on all paths, so the workflow runs on every pull request
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        language: [python, java, javascript] # Add more languages as needed
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up CodeQL
+        uses: github/codeql-action/setup@v2
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Initialize CodeQL
+        run: codeql database init --language=${{ matrix.language }} --source-root ./
+
+      - name: Analyze code
+        run: codeql database analyze ./${{ matrix.language }}-default --format=sarif-latest/codeql
+
+      - name: Upload CodeQL results
+        uses: actions/upload-artifact@v2
+        with:
+          name: codeql-results
+          path: ./${{ matrix.language }}-default/sarif
+
